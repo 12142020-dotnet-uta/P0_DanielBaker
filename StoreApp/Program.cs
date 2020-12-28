@@ -6,7 +6,6 @@ namespace StoreApp
     class Program
     {
         static StoreDataLayer storeState = new StoreDataLayer();
-        // static InputFunctions input = new InputFunctions();
         static void Main(string[] args)
         {
 
@@ -39,6 +38,7 @@ namespace StoreApp
                         Console.WriteLine("To create new store please enter a city for it:");
                         string storeAddress = Console.ReadLine();
                         StoreLocation currentStore = storeState.CreateStore(storeName, storeAddress);
+                        
                     } else if(shopState == 4)
                     {
                         Console.WriteLine("To create new product please enter a name for it:");
@@ -47,13 +47,6 @@ namespace StoreApp
                         string productDesc = Console.ReadLine();
 
                         storeState.CreateProduct(productName, productDesc, 22.0, false);
-
-                        // List<Product> products = storeState.GetProducts( currentStore );
-                       
-                        // foreach( Product p in products )
-                        // {
-                        //     // Console.WriteLine($"{p.ProductName} {p.ProductDesc} {p.ProductQuantity} {p.IsAgeRestricted}");
-                        // }
 
                     } else if (shopState == 5)
                     {
@@ -69,10 +62,12 @@ namespace StoreApp
                         
                         Console.WriteLine($"Select a product by name to add it to {currentStore.StoreLocationName}:");
                         List<Product> products = storeState.GetProducts();
+                        
                         foreach(Product p in products)
                         {
                             Console.WriteLine($"{p.ProductName}");
                         }
+
                         string selectedProduct = Console.ReadLine();
                         Product currentProduct = storeState.SelectProduct(selectedProduct);
 
@@ -82,29 +77,6 @@ namespace StoreApp
                         storeState.AssignInventory(currentProduct, currentStore, quantityAdd);
 
                     }
-                    // Console.WriteLine("To create new store please enter a name for it:");
-                    // string storeName = Console.ReadLine();
-                    // Console.WriteLine("To create new store please enter a city for it:");
-                    // string storeAddress = Console.ReadLine();
-                    // StoreLocation currentStore = storeState.CreateStore(storeName, storeAddress);
-
-
-                    // Console.WriteLine("To create new product please enter a name for it:");
-                    // string productName = Console.ReadLine();
-                    // Console.WriteLine("To create new product please enter a desc for it:");
-                    // string productDesc = Console.ReadLine();
-
-                    // storeState.CreateProduct(productName, productDesc, 22.0, currentStore, false);
-
-                    // List<Product> products = storeState.GetProducts( currentStore );
-                    // // Console.WriteLine(products);
-
-                    // foreach( Product p in products )
-                    // {
-                    //     Console.WriteLine($"{p.ProductName} {p.ProductDesc} {p.IsAgeRestricted} {p.ProductID}  {p.StoreLocation} {p.StoreLocation.StoreLocationId}");
-                    // }
-
-
 
                 } while (shopState != 2);
             } while(onlineState == 1);
