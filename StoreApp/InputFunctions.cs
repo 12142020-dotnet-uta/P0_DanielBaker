@@ -4,7 +4,7 @@ namespace StoreApp
 {
     public class InputFunctions
     {
-        public int ParseStringToInt(string numberString)
+        public static int ParseStringToInt(string numberString)
         {
             int number = -1;
             bool isNumber = Int32.TryParse( numberString, out number );
@@ -18,7 +18,7 @@ namespace StoreApp
             }
         }
 
-        public double ParseStringToDouble(string numberString)
+        public static double ParseStringToDouble(string numberString)
         {
             double number = -1;
             bool isNumber = Double.TryParse( numberString, out number );

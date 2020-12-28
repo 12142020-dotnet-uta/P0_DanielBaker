@@ -12,7 +12,7 @@ namespace StoreApp
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Server=localhost;Database=TargMart3;User Id=sa;Password=Bd195357!;");
+            options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Targmarttest;Trusted_Connection=True;");
         }
         
     }

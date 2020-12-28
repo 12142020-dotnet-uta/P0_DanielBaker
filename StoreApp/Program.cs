@@ -6,7 +6,7 @@ namespace StoreApp
     class Program
     {
         static StoreDataLayer storeState = new StoreDataLayer();
-        static InputFunctions input = new InputFunctions();
+        // static InputFunctions input = new InputFunctions();
         static void Main(string[] args)
         {
 
@@ -14,7 +14,7 @@ namespace StoreApp
             do
             {
                 Console.WriteLine("Welcome to Targmart.\n\t1. Login\n\t2. Quit");
-                onlineState = input.ParseStringToInt(Console.ReadLine());
+                onlineState = InputFunctions.ParseStringToInt(Console.ReadLine());
                 if(onlineState != 1) 
                 {
                     Console.Write("See you again soon!!!");
@@ -27,7 +27,7 @@ namespace StoreApp
                 do
                 {
                     Console.WriteLine($"Welcome {activeCustomer.CustomerFName}!\n\t1. Shop\n\t2. Logout\n\t3. Create Store\n\t4. Create Products\n\t5. Assign Inventory");
-                    shopState = input.ParseStringToInt(Console.ReadLine());
+                    shopState = InputFunctions.ParseStringToInt(Console.ReadLine());
                     if(shopState == 2)
                     {
                         Console.WriteLine("Logging out...");
@@ -77,7 +77,7 @@ namespace StoreApp
                         Product currentProduct = storeState.SelectProduct(selectedProduct);
 
                         Console.WriteLine($"Selected product: {currentProduct.ProductName}\n Please enter the quantity of {currentProduct.ProductName} to add to {currentStore.StoreLocationName}");
-                        int quantityAdd = input.ParseStringToInt(Console.ReadLine());
+                        int quantityAdd = InputFunctions.ParseStringToInt(Console.ReadLine());
 
                         storeState.AssignInventory(currentProduct, currentStore, quantityAdd);
 

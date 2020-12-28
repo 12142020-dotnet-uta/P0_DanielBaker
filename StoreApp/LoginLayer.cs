@@ -4,7 +4,7 @@ namespace StoreApp
 {
     public class LoginLayer
     {
-        static InputFunctions inputEdit = new InputFunctions();
+        // static InputFunctions inputEdit = new InputFunctions();
         // public Customer Login()
         // {
 
@@ -12,7 +12,7 @@ namespace StoreApp
         public Customer CreateCustomer( string uName )
         {
             var info = GetLoginInfo(uName);
-            int age = inputEdit.ParseStringToInt( info[3] );
+            int age = InputFunctions.ParseStringToInt( info[3] );
             Customer newUser = new Customer( uName, info[0], info[1], info[2], age );
             return newUser;
         }
