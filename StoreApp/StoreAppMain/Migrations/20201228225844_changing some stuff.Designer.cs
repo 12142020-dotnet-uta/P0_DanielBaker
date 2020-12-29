@@ -9,9 +9,9 @@ using StoreApp;
 
 namespace StoreApp.Migrations
 {
-    [DbContext(typeof(StoreDBContext))]
-    [Migration("20201228003418_adding inventory to db context")]
-    partial class addinginventorytodbcontext
+    [DbContext(typeof(StoreDbContext))]
+    [Migration("20201228225844_changing some stuff")]
+    partial class changingsomestuff
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

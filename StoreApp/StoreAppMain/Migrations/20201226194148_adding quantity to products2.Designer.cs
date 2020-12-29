@@ -9,9 +9,9 @@ using StoreApp;
 
 namespace StoreApp.Migrations
 {
-    [DbContext(typeof(StoreDBContext))]
-    [Migration("20201228002239_adding inventory")]
-    partial class addinginventory
+    [DbContext(typeof(StoreDbContext))]
+    [Migration("20201226194148_adding quantity to products2")]
+    partial class addingquantitytoproducts2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,6 +86,9 @@ namespace StoreApp.Migrations
                     b.Property<double>("ProductPrice")
                         .HasColumnType("float");
 
+                    b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("StoreLocationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -133,9 +136,11 @@ namespace StoreApp.Migrations
 
             modelBuilder.Entity("StoreApp.Product", b =>
                 {
-                    b.HasOne("StoreApp.StoreLocation", null)
+                    b.HasOne("StoreApp.StoreLocation", "StoreLocation")
                         .WithMany("Products")
                         .HasForeignKey("StoreLocationId");
+
+                    b.Navigation("StoreLocation");
                 });
 
             modelBuilder.Entity("StoreApp.StoreLocation", b =>

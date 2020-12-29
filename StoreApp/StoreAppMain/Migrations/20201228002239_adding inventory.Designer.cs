@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StoreApp;
 
 namespace StoreApp.Migrations
 {
-    [DbContext(typeof(StoreDBContext))]
-    partial class StoreDBContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(StoreDbContext))]
+    [Migration("20201228002239_adding inventory")]
+    partial class addinginventory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,30 +52,6 @@ namespace StoreApp.Migrations
                     b.ToTable("customers");
                 });
 
-            modelBuilder.Entity("StoreApp.Inventory", b =>
-                {
-                    b.Property<Guid>("InventoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProductID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ProductQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("StoreLocationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("InventoryId");
-
-                    b.HasIndex("ProductID");
-
-                    b.HasIndex("StoreLocationId");
-
-                    b.ToTable("inventories");
-                });
-
             modelBuilder.Entity("StoreApp.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
@@ -108,7 +86,12 @@ namespace StoreApp.Migrations
                     b.Property<double>("ProductPrice")
                         .HasColumnType("float");
 
+                    b.Property<Guid?>("StoreLocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ProductID");
+
+                    b.HasIndex("StoreLocationId");
 
                     b.ToTable("products");
                 });
@@ -139,21 +122,6 @@ namespace StoreApp.Migrations
                     b.Navigation("PerferedStore");
                 });
 
-            modelBuilder.Entity("StoreApp.Inventory", b =>
-                {
-                    b.HasOne("StoreApp.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID");
-
-                    b.HasOne("StoreApp.StoreLocation", "StoreLocation")
-                        .WithMany("Inventory")
-                        .HasForeignKey("StoreLocationId");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("StoreLocation");
-                });
-
             modelBuilder.Entity("StoreApp.Order", b =>
                 {
                     b.HasOne("StoreApp.Customer", "Customer")
@@ -163,11 +131,18 @@ namespace StoreApp.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("StoreApp.Product", b =>
+                {
+                    b.HasOne("StoreApp.StoreLocation", null)
+                        .WithMany("Products")
+                        .HasForeignKey("StoreLocationId");
+                });
+
             modelBuilder.Entity("StoreApp.StoreLocation", b =>
                 {
                     b.Navigation("FrequentCustomers");
 
-                    b.Navigation("Inventory");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

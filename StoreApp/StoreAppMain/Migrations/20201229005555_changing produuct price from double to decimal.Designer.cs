@@ -9,9 +9,9 @@ using StoreApp;
 
 namespace StoreApp.Migrations
 {
-    [DbContext(typeof(StoreDBContext))]
-    [Migration("20201228002437_adding inventory to location")]
-    partial class addinginventorytolocation
+    [DbContext(typeof(StoreDbContext))]
+    [Migration("20201229005555_changing produuct price from double to decimal")]
+    partial class changingproduuctpricefromdoubletodecimal
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,7 +73,7 @@ namespace StoreApp.Migrations
 
                     b.HasIndex("StoreLocationId");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("inventories");
                 });
 
             modelBuilder.Entity("StoreApp.Order", b =>
@@ -107,8 +107,8 @@ namespace StoreApp.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("ProductPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal>("ProductPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ProductID");
 
