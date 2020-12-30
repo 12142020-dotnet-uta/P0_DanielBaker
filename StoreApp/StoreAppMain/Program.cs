@@ -26,15 +26,23 @@ namespace StoreApp
                 int shopState = 1;
                 do
                 {
-                    Console.WriteLine($"Welcome {activeCustomer.CustomerFName}!\n\t1. Shop\n\t2. Logout\n\t3. Create Store\n\t4. Create Products\n\t5. Assign Inventory");
+                   
+                    if(activeCustomer.isAdmin == true)
+                    {
+                        Console.WriteLine($"Welcome {activeCustomer.CustomerFName}!\n\t1. Shop\n\t2. Logout\n\t3. Create Store\n\t4. Create Products\n\t5. Assign Inventory\n\t6. Manage Customers");
+                        
+                    } else
+                    {
+                         Console.WriteLine($"Welcome {activeCustomer.CustomerFName}!\n\t1. Shop\n\t2. Logout");
+                    }
                     shopState = InputFunctions.ParseStringToInt(Console.ReadLine());
                     if(shopState == 1)
                     {
                         int cartState = 1;
                         do
                         {
-                            Console.WriteLine("Welcome to TargMart! Type 1 to begin shopping, type 2 to view your cart, or press 3 to checkout.");
-                            Console.WriteLine("\t1. Shop\n\t2.View Cart\n\t3. Checkout");
+                            Console.WriteLine("Welcome to TargMart! Type 1 to begin shopping, type 2 to view your cart, type 3 to checkout, type 4 to view past orders or type 5 to exit.");
+                            Console.WriteLine("\t1. Shop\n\t2. View Cart\n\t3. Checkout\n\t4. Past Orders\n\t5. Exit");
                             cartState = InputFunctions.ParseStringToInt(Console.ReadLine());
                             
                             // creating new cart if there is none, if it exists already, grabbing it.
@@ -69,38 +77,63 @@ namespace StoreApp
                             
                             if(cartState == 2)
                             {
+                                // this is repeated
                                 List<OrderDetails> cart = storeState.ShowCart(currentOrder);
-
                                 foreach( OrderDetails o in cart )
                                 {
                                     Console.WriteLine($"Product Name: {o.Item.Product.ProductName} Quantity: {o.QuantityOrdered} From: {o.Item.StoreLocation.StoreLocationName} Price: {o.Price}");
                                 }
+                                // end repeat
                             }
                             if(cartState == 3)
                             {
-                               storeState.CheckoutOrder(currentOrder);
-
+                                
+                                storeState.CheckoutOrder(currentOrder);
+                            
+                                // this is repeated
+                                List<OrderDetails> cart = storeState.ShowCart(currentOrder);
+                                Console.WriteLine($"\nChecking out with {cart.Count} product(s) totaling {currentOrder.TotalPrice}");
+                                foreach( OrderDetails o in cart )
+                                {
+                                    Console.WriteLine($"Product Name: {o.Item.Product.ProductName} | Quantity: {o.QuantityOrdered} | From: {o.Item.StoreLocation.StoreLocationName} | Price: {o.Price}\n");
+                                }
+                                // end repeat
                             }
 
-                        } while(cartState == 1);
+                            if(cartState == 4)
+                            {
+                                List<Order> previousOrders = storeState.ShowOrders(activeCustomer);
+                                List<OrderDetails> previousOrderDetails = new List<OrderDetails>();
+                                foreach(Order order in previousOrders)
+                                {
+                                    previousOrderDetails = storeState.ShowCart(order);
+                                    Console.WriteLine($"Order ID: {order.OrderId} | Line Items: {previousOrderDetails.Count} |Total: ${order.TotalPrice}");
+                                    foreach(OrderDetails item in previousOrderDetails)
+                                    {
+                                        Console.WriteLine($"\tProduct Name: {item.Item.Product.ProductName} | Quantity: {item.QuantityOrdered} | From: {item.Item.StoreLocation.StoreLocationName} | Price: {item.Price}");
+                                    }
+                                    Console.WriteLine();
+                                }
+                            }
+
+                        } while(cartState != 5);
                         
 
 
-                    }
-                    if(shopState == 2)
+                    } else if(shopState == 2)
                     {
                         Console.WriteLine("Logging out...");
                         break;
-                    } else if(shopState == 3)
+                    } else if(shopState == 3 && activeCustomer.isAdmin == true)
                     {
                         StoreLocation currentStore = StoreCreation();
                         Console.WriteLine($"{currentStore.StoreLocationName} was created with and ID: {currentStore.StoreLocationId}");
-                    } else if(shopState == 4)
+                    } else if(shopState == 4 && activeCustomer.isAdmin == true)
                     {
                         Product newProduct = CreateProduct();
                         Console.WriteLine($"{newProduct.ProductName} created with a price of ${newProduct.ProductPrice}");
 
-                    } else if (shopState == 5)
+                    } else if (shopState == 5 && activeCustomer.isAdmin == true)
                     {
                         Console.WriteLine("Select store by name to add a product to it.");
 
@@ -122,6 +155,28 @@ namespace StoreApp
                         int quantityAdd = InputFunctions.ParseStringToInt(Console.ReadLine());
 
                         storeState.AssignInventory(currentProduct, currentStore, quantityAdd);
+                    } else if(shopState == 6 && activeCustomer.isAdmin == true)
+                    {
+                        List<Customer> customers = storeState.GetCustomers();
+                        foreach(Customer c in customers)
+                        {
+                            Console.WriteLine($"{c.CustomerUserName} {c.CustomerFName} {c.CustomerLName}");
+                        }
+                        
+                        Console.WriteLine("Enter a username to make user admin");
+                        string input = Console.ReadLine();
+                        Customer editCustomer = storeState.SelectCustomer(input); 
+                        if(editCustomer.isAdmin == false)
+                        {
+                            Console.WriteLine($"Making {editCustomer.CustomerUserName} an admin.");
+                            storeState.MakeUserAdmin(editCustomer);
+                        } else if(editCustomer.isAdmin == true)
+                        {
+                            Console.WriteLine($"{editCustomer.CustomerUserName} is already an admin.");
+                        }
+                        
+
+
                     }
 
                 } while (shopState != 2);
@@ -160,6 +215,15 @@ namespace StoreApp
             Console.WriteLine("Is this product age restricted?");
             bool isProductAgeRestricted = InputFunctions.ParseStringToBool(Console.ReadLine());
             return storeState.CreateProduct(productName, productDesc, productPrice, isProductAgeRestricted);
+        }
+
+        public static void PrintOrder(Order order, List<OrderDetails> orders)
+        {
+            Console.WriteLine($"Checking out with {order.ProductsInOrder.Count} items totaling {order.TotalPrice}");
+            foreach(OrderDetails o in orders )
+            {
+                Console.WriteLine();
+            }
         }
 
         

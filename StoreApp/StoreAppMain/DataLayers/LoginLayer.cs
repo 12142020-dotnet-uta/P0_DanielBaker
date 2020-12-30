@@ -6,7 +6,7 @@ namespace StoreApp
     {
 
         /// <summary>
-        /// Takes in a string to create a new customer usernam, only is called if customer does not exist.
+        /// Takes in a string to create a new customer username, only is called if customer does not exist.
         /// </summary>
         /// <param name="uName">String inputted username</param>
         /// <returns></returns>

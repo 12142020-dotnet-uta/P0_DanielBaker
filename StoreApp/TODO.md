@@ -1,16 +1,24 @@
+# display all order history of a store location
+# exception handling
+
+
+
 # ***All input validation***
-# Hiding password
-# Validating that product price only has 2 decimals
-# Create age restricted and handle input from CreateProduct() in main 
-# Create admin mode
-# Some sort of interface
+# handle quantity logic a bit better
+# Be able to update a product
 # Unit testing
 # XML comments
-# Be able to update a product
+# Some sort of interface
+# Validating that product price only has 2 decimals
+# Hiding password
+# Create age restricted and handle input from CreateProduct() in main 
+# Create admin mode
 # Create logic for creating a new or grabbing old objext re: inventory, products, LIKE WHEN CREATING OR LOGGING INTO CUSTOMER
+
+
 # Add logic for ordering same item from multiple places???
 # if cart has no items??
-# logic for checking out with too many items if inventory goes down
+
 
 
 WANT TO TALK ABOUT

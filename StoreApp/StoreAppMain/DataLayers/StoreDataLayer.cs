@@ -131,8 +131,14 @@ namespace StoreApp
         public Order CheckoutOrder(Order cartOrder)
         {
             List<OrderDetails> cart = orderDetails.Include(x => x.Order).Include(x => x.Item).ThenInclude(x => x.Product).Include(x => x.Item).ThenInclude(x => x.StoreLocation).Where(x => x.Order == cartOrder).ToList();
+
             foreach( OrderDetails item in cart)
             {
+                if((item.Item.ProductQuantity - item.QuantityOrdered) < 0)
+                {
+                    throw new Exception($"Can not checkout. You are odering too much {item.Item.Product.ProductName}.");
+                }
+
                 SubtractInventoryOnOrder(item.Item, item.QuantityOrdered);
             }
             cartOrder.isOrdered = true;
@@ -164,7 +170,12 @@ namespace StoreApp
                 Inventory addedInventory = inventories.Include(x => x.StoreLocation).Include(x => x.Product).Where(x => x.Product.ProductName == item.Product.ProductName).FirstOrDefault();
                 Console.WriteLine($"{addedInventory.Product.ProductName} is not in cart... adding {addedInventory.Product.ProductName}");
                 itemOrder = new OrderDetails( item, currentOrder, quantity);
-                Console.WriteLine($"Added {quantity} {addedInventory.Product.ProductName} to your cart at ${addedInventory.Product.ProductPrice} each");
+                if(itemOrder.QuantityOrdered > addedInventory.ProductQuantity)
+                {
+                     throw new Exception($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                }
+                decimal total = addedInventory.Product.ProductPrice * quantity;
+                Console.WriteLine($"Added {quantity} {addedInventory.Product.ProductName} to your cart at ${addedInventory.Product.ProductPrice} each. For a total of ${total}");
                 itemOrder.Price = itemOrder.TotalPrice(quantity, addedInventory.Product.ProductPrice);
                 AddPriceToOrder(currentOrder, itemOrder.Price);
                 orderDetails.Add(itemOrder);
@@ -172,12 +183,55 @@ namespace StoreApp
             else
             {
                 itemOrder.QuantityOrdered += quantity;
+                if(itemOrder.QuantityOrdered > item.ProductQuantity)
+                {
+                    throw new Exception($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                }
             }
             DbContext.SaveChanges();
             return itemOrder;
         }
 
-// RETURNING LISTS
+
+        // selecting objects
+        public Product SelectProduct (string name)
+        {
+            Product selectedProduct = new Product();
+            selectedProduct = products.Where(x => x.ProductName == name).FirstOrDefault();
+            if(selectedProduct == null)
+            {
+                throw new Exception("Please enter a valid product");
+            }
+            return selectedProduct;
+        }
+
+        public Inventory SelectInventory(string name, StoreLocation store)
+        {
+            Inventory selectedInventory = new Inventory();
+            selectedInventory = inventories.Include(x => x.StoreLocation).Include(x => x.Product).Where(x => x.StoreLocation.StoreLocationName == store.StoreLocationName && x.Product.ProductName == name).FirstOrDefault();
+            
+            if(selectedInventory == null)
+            {
+                throw new Exception("This item does not exist at this store");
+            }
+         
+            return selectedInventory;
+        }
+
+        
+
+        // RETURNING LISTS
+
+        public List<Order> ShowOrders(Customer c)
+        {
+            return orders.Where(x => x.Customer == c && x.isOrdered == true).ToList();
+        }
+
+        public List<Order> ShowOrders(StoreLocation s)
+        {
+            List<Order> orderList = new List<Order>();            
+            return orderList;
+        }
 
         // can this return Order and loop through it later?????
         public List<OrderDetails> ShowCart(Order cartOrder)
@@ -188,9 +242,29 @@ namespace StoreApp
 
 
 
-
+        public List<Customer> GetCustomers()
+        {
+            return customers.ToList();
+        }
         
+        public Customer SelectCustomer(string username)
+        {
+            Customer selectedCustomer = new Customer();
+            foreach(Customer c in customers)
+            {
+                if(c.CustomerUserName == username)
+                {
+                    selectedCustomer = c;
+                }
+            }
+            return selectedCustomer;
+        }
 
+        public void MakeUserAdmin(Customer c)
+        {
+            c.MakeAdmin();
+            DbContext.SaveChanges();
+        }
 
         public List<StoreLocation> GetStores()
         {
@@ -215,16 +289,7 @@ namespace StoreApp
             return products.ToList();
         }
 
-        public Product SelectProduct (string name)
-        {
-            Product selectedProduct = new Product();
-            selectedProduct = products.Where(x => x.ProductName == name).FirstOrDefault();
-            if(selectedProduct == null)
-            {
-                throw new Exception("Please enter a valid product");
-            }
-            return selectedProduct;
-        }
+   
 
         public List<Inventory> DisplayProducts (StoreLocation store)
         {
@@ -232,18 +297,7 @@ namespace StoreApp
             return inventory;
         }
 
-        public Inventory SelectInventory(string name, StoreLocation store)
-        {
-            Inventory selectedInventory = new Inventory();
-            selectedInventory = inventories.Include(x => x.StoreLocation).Include(x => x.Product).Where(x => x.StoreLocation.StoreLocationName == store.StoreLocationName && x.Product.ProductName == name).FirstOrDefault();
-            
-            if(selectedInventory == null)
-            {
-                throw new Exception("This item does not exist at this store");
-            }
-         
-            return selectedInventory;
-        }
+        
        
 
     }
