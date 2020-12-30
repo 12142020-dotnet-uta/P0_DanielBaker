@@ -10,13 +10,18 @@ namespace StoreApp
         public Guid OrderId { get; set; } = Guid.NewGuid();
         public List<OrderDetails> ProductsInOrder = new List<OrderDetails>();
         public Customer Customer { get; set; }
-        public StoreLocation Store { get; set; }
+        public StoreLocation Store { get; set; } = null;
         public decimal TotalPrice { get; set; } = 0;
         public bool isOrdered { get; set; } = false;
         public bool isCart { get; set; } = false;
         public void AddToPrice( decimal price )
         {
             TotalPrice += price;
+        }
+
+        public void AssignStore(StoreLocation store)
+        {
+            Store = store;
         }
 
         public Order(){}
